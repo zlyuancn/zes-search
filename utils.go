@@ -10,12 +10,12 @@ import (
 var ErrNoDocuments = errors.New("没有匹配的结果")
 
 // 构建用于超时的上下文
-func makeTimeoutCtx(timeout ...time.Duration) (context.Context, context.CancelFunc) {
-	if len(timeout) == 0 || timeout[0] <= 0 {
+func makeTimeoutCtx(timeout time.Duration) (context.Context, context.CancelFunc) {
+	if timeout <= 0 {
 		return context.WithCancel(context.Background())
 	}
 
-	return context.WithTimeout(context.Background(), timeout[0])
+	return context.WithTimeout(context.Background(), timeout)
 }
 
 // 检查输出参数, 它必须是一个已初始化的指针, 返回(指向的value, 指向的type, 是否非切片)
