@@ -9,7 +9,7 @@ import (
 )
 
 // 搜索获取总数, 功能同SearchTotal
-func SearchTotalWithTimeout(ss *elastic.SearchService, timeout time.Duration) (int, error) {
+func SearchTotalWithTimeout(timeout time.Duration, ss *elastic.SearchService) (int, error) {
 	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
 	return SearchTotal(ctx, ss)

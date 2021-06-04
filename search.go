@@ -16,7 +16,7 @@ import (
 )
 
 // 搜索, 功能同Search
-func SearchWithTimeout(ss *elastic.SearchService, a interface{}, timeout time.Duration) (total int, err error) {
+func SearchWithTimeout(timeout time.Duration, ss *elastic.SearchService, a interface{}) (total int, err error) {
 	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
 	return Search(ctx, ss, a)

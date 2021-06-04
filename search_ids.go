@@ -9,7 +9,7 @@ import (
 )
 
 // 搜索ids, 功能同SearchIds
-func SearchIdsWithTimeout(ss *elastic.SearchService, timeout time.Duration) ([]string, int, error) {
+func SearchIdsWithTimeout(timeout time.Duration, ss *elastic.SearchService) ([]string, int, error) {
 	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
 	return SearchIds(ctx, ss)
