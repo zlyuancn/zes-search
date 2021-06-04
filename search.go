@@ -15,15 +15,15 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-// 搜索, 将结果写入a, timeout为0时不设置超时
-func Search(ss *elastic.SearchService, a interface{}, timeout ...time.Duration) (total int, err error) {
-	ctx, cancel := makeTimeoutCtx(timeout...)
+// 搜索, 功能同Search
+func SearchWithTimeout(ss *elastic.SearchService, a interface{}, timeout time.Duration) (total int, err error) {
+	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
-	return SearchWithCtx(ctx, ss, a)
+	return Search(ctx, ss, a)
 }
 
-// 搜索, 功能同Search
-func SearchWithCtx(ctx context.Context, ss *elastic.SearchService, a interface{}) (total int, err error) {
+// 搜索, 将结果写入a
+func Search(ctx context.Context, ss *elastic.SearchService, a interface{}) (total int, err error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}

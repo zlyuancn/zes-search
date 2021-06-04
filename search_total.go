@@ -8,15 +8,15 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-// 搜索获取总数
-func SearchTotal(ss *elastic.SearchService, timeout ...time.Duration) (int, error) {
+// 搜索获取总数, 功能同SearchTotal
+func SearchTotalWithTimeout(ss *elastic.SearchService, timeout ...time.Duration) (int, error) {
 	ctx, cancel := makeTimeoutCtx(timeout...)
 	defer cancel()
-	return SearchTotalWithCtx(ctx, ss)
+	return SearchTotal(ctx, ss)
 }
 
-// 搜索获取总数, 功能同SearchTotal
-func SearchTotalWithCtx(ctx context.Context, ss *elastic.SearchService) (int, error) {
+// 搜索获取总数
+func SearchTotal(ctx context.Context, ss *elastic.SearchService) (int, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}

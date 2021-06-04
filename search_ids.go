@@ -8,15 +8,15 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-// 搜索ids, 返回匹配结果的id列表, timeout为0时不设置超时
-func SearchIds(ss *elastic.SearchService, timeout ...time.Duration) ([]string, int, error) {
-	ctx, cancel := makeTimeoutCtx(timeout...)
+// 搜索ids, 功能同SearchIds
+func SearchIdsWithTimeout(ss *elastic.SearchService, timeout time.Duration) ([]string, int, error) {
+	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
-	return SearchIdsWithCtx(ctx, ss)
+	return SearchIds(ctx, ss)
 }
 
-// 搜索ids, 功能同SearchIds
-func SearchIdsWithCtx(ctx context.Context, ss *elastic.SearchService) ([]string, int, error) {
+// 搜索ids, 返回匹配结果的id列表
+func SearchIds(ctx context.Context, ss *elastic.SearchService) ([]string, int, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
