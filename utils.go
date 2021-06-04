@@ -18,6 +18,15 @@ func makeTimeoutCtx(timeout time.Duration) (context.Context, context.CancelFunc)
 	return context.WithTimeout(context.Background(), timeout)
 }
 
+// 构建用于超时的上下文
+func makeTimeoutCtxWithBaseCtx(baseCtx context.Context, timeout time.Duration) (context.Context, context.CancelFunc) {
+	if timeout <= 0 {
+		return context.WithCancel(baseCtx)
+	}
+
+	return context.WithTimeout(baseCtx, timeout)
+}
+
 // 检查输出参数, 它必须是一个已初始化的指针, 返回(指向的value, 指向的type, 是否非切片)
 func checkOutParam(a interface{}) (a_value reflect.Value, a_type reflect.Type, one bool) {
 	a_type = reflect.TypeOf(a)
