@@ -8,14 +8,14 @@ import (
 )
 
 // 搜索获取总数, 功能同SearchTotal
-func SearchTotalWithTimeout(timeout time.Duration, ss *elastic.SearchService) (int, error) {
+func SearchTotalWithTimeout(timeout time.Duration, ss *elastic.SearchService) (resp *elastic.SearchResult, total int, err error) {
 	ctx, cancel := makeTimeoutCtx(timeout)
 	defer cancel()
 	return SearchTotal(ctx, ss)
 }
 
 // 搜索获取总数
-func SearchTotal(ctx context.Context, ss *elastic.SearchService) (int, error) {
+func SearchTotal(ctx context.Context, ss *elastic.SearchService) (resp *elastic.SearchResult, total int, err error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -24,10 +24,11 @@ func SearchTotal(ctx context.Context, ss *elastic.SearchService) (int, error) {
 	ss.Size(0)
 
 	// 执行
-	resp, err := ss.Do(ctx)
+	resp, err = ss.Do(ctx)
 	if err != nil {
-		return 0, err
+		return
 	}
 
-	return int(resp.TotalHits()), nil
+	total = int(resp.TotalHits())
+	return
 }
