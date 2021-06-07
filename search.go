@@ -29,8 +29,8 @@ func Search(ctx context.Context, ss *elastic.SearchService, a interface{}) (tota
 	}
 
 	// 检查输出参数, 它必须是一个已初始化的指针, 返回(指向的value, 指向的type, 是否非切片)
-	a_value, a_type, is_search_one := checkOutParam(a)
-	if is_search_one { // 如果不是切片, 表示只要一条数据
+	aValue, aType, isSearchOne := checkOutParam(a)
+	if isSearchOne { // 如果不是切片, 表示只要一条数据
 		ss = ss.Size(1)
 	}
 
@@ -43,14 +43,14 @@ func Search(ctx context.Context, ss *elastic.SearchService, a interface{}) (tota
 	// 获取总数
 	total = int(resp.TotalHits())
 	if total == 0 || len(resp.Hits.Hits) == 0 {
-		if is_search_one { // 如果只要一条数据, 但是无数据则返回错误
+		if isSearchOne { // 如果只要一条数据, 但是无数据则返回错误
 			return total, ErrNoDocuments
 		}
 		return total, nil
 	}
 
 	// 将数据写入a
-	if err = parseHits(resp.Hits.Hits, a_value, a_type); err != nil {
+	if err = parseHits(resp.Hits.Hits, aValue, aType); err != nil {
 		return total, err
 	}
 	return total, nil
