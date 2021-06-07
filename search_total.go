@@ -2,7 +2,6 @@ package zes_search
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/olivere/elastic/v7"
@@ -27,7 +26,7 @@ func SearchTotal(ctx context.Context, ss *elastic.SearchService) (int, error) {
 	// 执行
 	resp, err := ss.Do(ctx)
 	if err != nil {
-		return 0, fmt.Errorf("在搜索时出现错误: %s", err.Error())
+		return 0, err
 	}
 
 	return int(resp.TotalHits()), nil
