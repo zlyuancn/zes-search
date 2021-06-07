@@ -58,8 +58,9 @@ func checkSliceType(slice_type reflect.Type) (item_type reflect.Type, item_is_pt
 
 // 检查 item 类型, 它必须是 interface{}, map 或 struct
 func checkItemType(item_type reflect.Type) {
-	item_kind := item_type.Kind()
-	if item_kind != reflect.Interface && item_kind != reflect.Map && item_kind != reflect.Struct {
-		panic(errors.New("item必须是 interface{}, map 或 struct, 它可以选择带指针"))
+	switch item_type.Kind() {
+	case reflect.Interface, reflect.Map, reflect.Struct:
+		return
 	}
+	panic(errors.New("item必须是 interface{}, map 或 struct, 它可以选择带指针"))
 }
