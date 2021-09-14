@@ -10,7 +10,7 @@ import (
 
 // 滚动获取ids, 功能同ScrollIds
 func ScrollIdsWithTimeout(scrollTimeout time.Duration, ss *elastic.ScrollService, batchTimeout time.Duration,
-	process func(index int, hit *elastic.SearchHit, id string)) (total int, err error) {
+	process func(total, index int, hit *elastic.SearchHit, id string) error) (total int, err error) {
 	ctx, cancel := makeTimeoutCtx(scrollTimeout)
 	defer cancel()
 	return ScrollIds(ctx, ss, batchTimeout, process)
@@ -23,7 +23,7 @@ func ScrollIdsWithTimeout(scrollTimeout time.Duration, ss *elastic.ScrollService
 // batchTimeout 表示每次滚动超时
 // process 表示对每个id如何处理
 func ScrollIds(ctx context.Context, ss *elastic.ScrollService, batchTimeout time.Duration,
-	process func(index int, hit *elastic.SearchHit, id string)) (total int, err error) {
+	process func(total, index int, hit *elastic.SearchHit, id string) error) (total int, err error) {
 	// 获取id不需要 _source
 	ss.FetchSourceContext(elastic.NewFetchSourceContext(false))
 
@@ -50,7 +50,9 @@ func ScrollIds(ctx context.Context, ss *elastic.ScrollService, batchTimeout time
 
 		// 遍历每次滚动收到的数据
 		for _, hit := range resp.Hits.Hits {
-			process(index, hit, hit.Id)
+			if err = process(total, index, hit, hit.Id); err != nil {
+				return 0, err
+			}
 			index++
 		}
 	}

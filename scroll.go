@@ -14,7 +14,7 @@ import (
 
 // 滚动获取, 功能同Scroll
 func ScrollWithTimeout(scrollTimeout time.Duration, ss *elastic.ScrollService, batchTimeout time.Duration,
-	bean interface{}, process func(index int, hit *elastic.SearchHit, bean interface{})) (total int, err error) {
+	bean interface{}, process func(total, index int, hit *elastic.SearchHit, bean interface{}) error) (total int, err error) {
 	ctx, cancel := makeTimeoutCtx(scrollTimeout)
 	defer cancel()
 	return Scroll(ctx, ss, batchTimeout, bean, process)
@@ -28,7 +28,7 @@ func ScrollWithTimeout(scrollTimeout time.Duration, ss *elastic.ScrollService, b
 // bean 表示接收数据的变量, 它必须是指向 struct, map, interface{} 的指针
 // process 表示对每个数据如何处理
 func Scroll(ctx context.Context, ss *elastic.ScrollService, batchTimeout time.Duration,
-	bean interface{}, process func(index int, hit *elastic.SearchHit, bean interface{})) (total int, err error) {
+	bean interface{}, process func(total, index int, hit *elastic.SearchHit, bean interface{}) error) (total int, err error) {
 	// 检查bean类型
 	beanType := reflect.TypeOf(bean)
 	if beanType.Kind() != reflect.Ptr {
@@ -73,7 +73,9 @@ func Scroll(ctx context.Context, ss *elastic.ScrollService, batchTimeout time.Du
 				return 0, err
 			}
 
-			process(index, hit, item.Interface())
+			if err = process(total, index, hit, item.Interface()); err != nil {
+				return 0, err
+			}
 			index++
 		}
 	}
